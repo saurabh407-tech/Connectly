@@ -1,24 +1,4 @@
 
-import nodemailer from 'nodemailer';
-
-const smtpPort = Number(process.env.SMTP_PORT) || 587;
-
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: smtpPort,
-  secure: smtpPort === 465,
-
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-
-  // Prevent SMTP from hanging indefinitely
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 15000,
-});
-
 const sendOTP = async (email, otp, purpose = 'registration') => {
   const isRegistration = purpose === 'registration';
 
@@ -30,38 +10,62 @@ const sendOTP = async (email, otp, purpose = 'registration') => {
     ? 'Verify Your Email'
     : 'Reset Your Password';
 
+  const apiKey = process.env.BREVO_API_KEY;
+  const senderEmail = process.env.SMTP_FROM;
+
+  if (!apiKey || !senderEmail) {
+    throw new Error('Brevo API configuration is missing');
+  }
+
+  const emailPayload = {
+    sender: {
+      name: 'Connectly',
+      email: senderEmail,
+    },
+    to: [{ email }],
+    subject,
+    textContent: `Your Connectly OTP is ${otp}. It expires in 5 minutes.`,
+    htmlContent: `
+      <div style="font-family: Arial, sans-serif; padding: 24px;">
+        <h2>${heading}</h2>
+        <p>Your verification code is:</p>
+        <h1 style="letter-spacing: 8px;">${otp}</h1>
+        <p>This OTP expires in 5 minutes.</p>
+        <p>If you did not request this, please ignore this email.</p>
+      </div>
+    `,
+  };
+
   try {
-    const info = await transporter.sendMail({
-      from: `"Connectly" <${process.env.SMTP_FROM}>`,
-      to: email,
-      subject,
+    const response = await fetch(
+      'https://api.brevo.com/v3/smtp/email',
+      {
+        method: 'POST',
+        headers: {
+          accept: 'application/json',
+          'api-key': apiKey,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(emailPayload),
+        signal: AbortSignal.timeout(15000),
+      }
+    );
 
-      text: `Your Connectly OTP is ${otp}. It expires in 5 minutes.`,
+    const result = await response.json().catch(() => ({}));
 
-      html: `
-        <div style="font-family: Arial, sans-serif; padding: 24px;">
-          <h2>${heading}</h2>
-          <p>Your verification code is:</p>
-          <h1 style="letter-spacing: 8px;">${otp}</h1>
-          <p>This OTP expires in 5 minutes.</p>
-          <p>If you did not request this, please ignore this email.</p>
-        </div>
-      `,
-    });
+    if (!response.ok) {
+      throw new Error(
+        `Brevo API error (${response.status}): ${
+          result.message || 'Email sending failed'
+        }`
+      );
+    }
 
-    console.log('OTP email sent:', {
-      email,
-      messageId: info.messageId,
-    });
+    console.log('OTP email accepted by Brevo:', result.messageId);
 
-    return info;
+    return result;
   } catch (error) {
-    console.error('OTP email sending failed:', {
-      message: error.message,
-      code: error.code,
-      command: error.command,
-    });
-
+    console.error('OTP email sending failed:', error.message);
     throw error;
   }
 };
