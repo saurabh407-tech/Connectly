@@ -8,7 +8,7 @@ const api = axios.create({
 // Automatically attach JWT token
 api.interceptors.request.use((config) => {
   const authData = JSON.parse(
-    localStorage.getItem('connectly-auth') || '{}'
+    sessionStorage.getItem('connectly-auth') || '{}'
   );
 
   const token = authData.state?.token;

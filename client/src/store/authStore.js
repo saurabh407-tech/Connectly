@@ -1,6 +1,6 @@
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { authApi } from '../services/api.js';
 
 const getPayload = (response) =>
@@ -173,6 +173,7 @@ const useAuthStore = create(
 
     {
       name: 'connectly-auth',
+      storage: createJSONStorage(() => sessionStorage),
 
       partialize: (state) => ({
         user: state.user,
