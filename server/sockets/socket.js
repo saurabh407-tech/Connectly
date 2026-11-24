@@ -346,13 +346,6 @@ export const initSocket = (httpServer, allowedOrigins) => {
             return;
           }
 
-          if (!onlineSockets.has(receiverId)) {
-            socket.emit('call:error', {
-              message: 'This user is offline.',
-            });
-            return;
-          }
-
           // Both users must belong to this conversation.
           const conversation = await Conversation.findOne({
             _id: conversationId,
@@ -373,6 +366,24 @@ export const initSocket = (httpServer, allowedOrigins) => {
           if (!receiver) {
             socket.emit('call:error', {
               message: 'User not found.',
+            });
+            return;
+          }
+
+          if (!onlineSockets.has(receiverId)) {
+            await saveCallHistory(
+              {
+                callId: id,
+                callerId: userId,
+                receiverId,
+                conversationId: conversationId.toString(),
+                callType,
+              },
+              'missed'
+            );
+
+            socket.emit('call:error', {
+              message: 'This user is offline. Your call was saved as missed.',
             });
             return;
           }

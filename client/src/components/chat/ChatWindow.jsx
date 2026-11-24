@@ -464,7 +464,7 @@ export default function ChatWindow({
         <button
           type="button"
           onClick={() => onStartAudioCall?.(selectedUser, 'audio')}
-          disabled={callActive || !selectedUser.isOnline}
+          disabled={callActive}
           className="grid h-10 w-10 place-items-center rounded-full bg-[#D5CEC3] text-[#9C6B4E] transition hover:bg-[#C9C1B5] disabled:cursor-not-allowed disabled:opacity-40"
           aria-label="Start audio call"
           title="Audio call"
@@ -476,7 +476,7 @@ export default function ChatWindow({
         <button
           type="button"
           onClick={() => onStartVideoCall?.(selectedUser, 'video')}
-          disabled={callActive || !selectedUser.isOnline}
+          disabled={callActive}
           className="grid h-10 w-10 place-items-center rounded-full bg-[#B87959] text-[#F8F5EF] transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-40"
           aria-label="Start video call"
           title="Video call"

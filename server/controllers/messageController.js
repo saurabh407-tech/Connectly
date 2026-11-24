@@ -157,8 +157,10 @@ export const markMessagesRead = async (req, res, next) => {
           _id: { $in: unreadMessages.map((message) => message._id) },
         },
         {
-          $addToSet: { readBy: readerId },
-          $addToSet: { deliveredTo: readerId },
+          $addToSet: {
+            readBy: readerId,
+            deliveredTo: readerId,
+          },
         }
       );
 
