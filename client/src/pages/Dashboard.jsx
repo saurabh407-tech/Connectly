@@ -274,7 +274,11 @@ export default function Dashboard() {
       setSelectedUser(selected);
       setSelectedConversation(conversation);
 
-      await fetchConversations();
+      // Refresh the sidebar independently so a slow list request cannot keep
+      // the newly selected conversation behind the opening overlay.
+      fetchConversations().catch((error) =>
+        console.error('Failed to refresh conversations:', error.message)
+      );
       clearUnread(conversation._id);
     } catch (error) {
       setChatError(error.message);
