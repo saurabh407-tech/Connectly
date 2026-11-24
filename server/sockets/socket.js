@@ -156,10 +156,10 @@ const finishCall = async (callId, userId, status) => {
   return call;
 };
 
-export const initSocket = (httpServer, clientUrl) => {
+export const initSocket = (httpServer, allowedOrigins) => {
   io = new Server(httpServer, {
     cors: {
-      origin: clientUrl,
+      origin: allowedOrigins,
       methods: ['GET', 'POST', 'PATCH'],
       credentials: true,
     },

@@ -17,13 +17,35 @@ import conversationRoutes from './routes/conversationRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 
+// Allowed frontend origins
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://connectly-theta-eosin.vercel.app',
+];
+
+// Middleware
 app.use(helmet());
-app.use(cors({ origin: CLIENT_URL, credentials: true }));
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS blocked origin: ${origin}`));
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
+// API rate limiter
 app.use(
   '/api',
   rateLimit({
@@ -38,6 +60,7 @@ app.use(
   })
 );
 
+// Health check
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
@@ -49,18 +72,23 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/conversations', conversationRoutes);
 app.use('/api/messages', messageRoutes);
 
+// Error handling
 app.use(notFound);
 app.use(errorHandler);
 
+// HTTP server
 const server = http.createServer(app);
 
-initSocket(server, CLIENT_URL);
+// Socket.IO
+initSocket(server, allowedOrigins);
 
+// Start server
 const start = async () => {
   try {
     await connectDB();
