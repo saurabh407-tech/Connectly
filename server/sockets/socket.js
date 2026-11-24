@@ -14,6 +14,7 @@ const onlineSockets = new Map();
 
 // Tracks active audio/video calls.
 const activeCalls = new Map();
+const CALL_RING_TIMEOUT_MS = 30_000;
 
 // Find an active call for a particular user.
 const getActiveCallForUser = (userId) => {
@@ -150,6 +151,7 @@ const finishCall = async (callId, userId, status) => {
 
   // Delete first to prevent duplicate history records.
   activeCalls.delete(callId);
+  clearTimeout(call.timeoutId);
 
   await saveCallHistory(call, status);
 
@@ -222,6 +224,20 @@ export const initSocket = (httpServer, allowedOrigins) => {
     } catch (error) {
       console.error('Online status update error:', error.message);
     }
+
+    // Deliver calls that are still ringing if the receiver reconnects.
+    activeCalls.forEach((call) => {
+      if (call.receiverId === userId && call.status === 'ringing') {
+        socket.emit('call:incoming', {
+          callId: call.callId,
+          caller: {
+            id: call.callerId,
+            name: call.callerName,
+          },
+          callType: call.callType,
+        });
+      }
+    });
 
     // ==========================================
     // JOIN / LEAVE CONVERSATION
@@ -370,27 +386,10 @@ export const initSocket = (httpServer, allowedOrigins) => {
             return;
           }
 
-          if (!onlineSockets.has(receiverId)) {
-            await saveCallHistory(
-              {
-                callId: id,
-                callerId: userId,
-                receiverId,
-                conversationId: conversationId.toString(),
-                callType,
-              },
-              'missed'
-            );
-
-            socket.emit('call:error', {
-              message: 'This user is offline. Your call was saved as missed.',
-            });
-            return;
-          }
-
           const call = {
             callId: id,
             callerId: userId,
+            callerName: socket.user.name,
             receiverId,
             conversationId: conversationId.toString(),
             callType,
@@ -399,19 +398,34 @@ export const initSocket = (httpServer, allowedOrigins) => {
           };
 
           activeCalls.set(id, call);
+          call.timeoutId = setTimeout(async () => {
+            const pendingCall = activeCalls.get(id);
+
+            if (!pendingCall || pendingCall.status !== 'ringing') return;
+
+            await finishCall(id, pendingCall.receiverId, 'missed');
+            io.to(pendingCall.callerId).emit('call:ended', {
+              callId: id,
+            });
+            io.to(pendingCall.receiverId).emit('call:ended', {
+              callId: id,
+            });
+          }, CALL_RING_TIMEOUT_MS);
 
           console.log(
             `${callType.toUpperCase()} call started: ${userId} -> ${receiverId}`
           );
 
-          io.to(receiverId).emit('call:incoming', {
-            callId: id,
-            caller: {
-              id: userId,
-              name: socket.user.name,
-            },
-            callType,
-          });
+          if (onlineSockets.has(receiverId)) {
+            io.to(receiverId).emit('call:incoming', {
+              callId: id,
+              caller: {
+                id: userId,
+                name: socket.user.name,
+              },
+              callType,
+            });
+          }
         } catch (error) {
           console.error('Call invite error:', error.message);
 
@@ -437,6 +451,8 @@ export const initSocket = (httpServer, allowedOrigins) => {
 
       // Accepted does not necessarily mean WebRTC is connected.
       call.status = 'accepted';
+      clearTimeout(call.timeoutId);
+      call.timeoutId = null;
 
       console.log(`Call accepted: ${id}`);
 
@@ -604,7 +620,11 @@ export const initSocket = (httpServer, allowedOrigins) => {
         // End the active call if the user's last socket disconnects.
         const activeCall = getActiveCallForUser(userId);
 
-        if (activeCall) {
+        const receiverLeftWhileRinging =
+          activeCall?.status === 'ringing' &&
+          activeCall.receiverId === userId;
+
+        if (activeCall && !receiverLeftWhileRinging) {
           const peerId = getCallPeer(activeCall, userId);
 
           let finalStatus = 'completed';
