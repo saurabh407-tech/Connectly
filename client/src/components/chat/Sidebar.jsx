@@ -5,9 +5,9 @@ import Logo from '../common/Logo.jsx';
 import UserProfileCard from './UserProfileCard.jsx';
 import ConversationList from './ConversationList.jsx';
 
-export default function Sidebar({ user, onLogout, onSelectUser }) {
+export default function Sidebar({ user, onLogout, onSelectUser, chatOpen }) {
   return (
-    <aside className="flex h-full w-full flex-col border-r border-ink-600 bg-ink-800 md:w-80 lg:w-96">
+    <aside className={`${chatOpen ? 'hidden md:flex' : 'flex'} h-full w-full flex-col border-r border-ink-600 bg-ink-800 md:w-80 lg:w-96`}>
 
       {/* Sidebar Header */}
       <div className="flex items-center justify-between px-4 py-4">

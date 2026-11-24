@@ -373,6 +373,7 @@ export default function Dashboard() {
         user={user}
         onLogout={handleLogout}
         onSelectUser={handleSelectUser}
+        chatOpen={Boolean(selectedUser)}
       />
 
       <ChatWindow
@@ -385,6 +386,7 @@ export default function Dashboard() {
         onStartVideoCall={(receiver) =>
           startCall(receiver, 'video', selectedConversation?._id)
         }
+        onBack={() => handleSelectUser(null)}
         callActive={Boolean(call)}
       />
 

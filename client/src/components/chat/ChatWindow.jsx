@@ -1,6 +1,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import {
+  ArrowLeft,
   MessagesSquare,
   Send,
   Circle,
@@ -44,6 +45,7 @@ export default function ChatWindow({
   socket,
   onStartAudioCall,
   onStartVideoCall,
+  onBack,
   callActive,
 }) {
   const [text, setText] = useState('');
@@ -419,9 +421,17 @@ export default function ChatWindow({
   }
 
   return (
-    <section className="hidden min-w-0 flex-1 flex-col bg-[#F4F1EA] md:flex">
+    <section className="flex min-w-0 flex-1 flex-col bg-[#F4F1EA]">
       {/* Chat header */}
       <header className="flex items-center gap-3 border-b border-[#D8D1C6] bg-[#E8E3DA] px-5 py-3">
+        <button
+          type="button"
+          onClick={onBack}
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-lg text-[#292A27] hover:bg-[#D8D1C6] md:hidden"
+          aria-label="Back to people"
+        >
+          <ArrowLeft size={20} />
+        </button>
         <Avatar
           name={selectedUser.name}
           src={selectedUser.avatar}
