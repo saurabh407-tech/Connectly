@@ -1,10 +1,16 @@
-
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, User, AlertCircle, ArrowRight } from 'lucide-react';
+import {
+  AlertCircle,
+  ArrowRight,
+  Lock,
+  Mail,
+  MessageCircle,
+  ShieldCheck,
+  User,
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 
-import AuthCard from '../components/common/AuthCard.jsx';
 import Input from '../components/common/Input.jsx';
 import Button from '../components/common/Button.jsx';
 import useAuthStore from '../store/authStore.js';
@@ -60,11 +66,9 @@ export default function Register() {
       });
 
       toast.success('Account created! Please verify your email.');
-
       navigate('/verify-email', {
         state: { email },
       });
-
     } catch (err) {
       const status = err.response?.status;
       const message = err.response?.data?.message || '';
@@ -82,241 +86,137 @@ export default function Register() {
   };
 
   return (
-    <div className="flex h-dvh items-center justify-center overflow-hidden bg-[#F4F1EA] px-4 py-3 font-sans text-[#292A27]">
+    <div className="relative isolate h-dvh overflow-hidden bg-[#EAF0FC] px-3 py-2 font-sans text-[#253451] sm:px-5 sm:py-3">
+      <div className="pointer-events-none absolute -left-44 -top-48 h-[31rem] w-[31rem] rounded-full border-[18px] border-white/45 bg-gradient-to-br from-white/80 to-[#D9E5FF]/70 shadow-[inset_-12px_-12px_32px_rgba(111,145,220,0.18),18px_18px_55px_rgba(91,123,191,0.16)]" />
+      <div className="pointer-events-none absolute -bottom-48 -right-40 h-[28rem] w-[28rem] rounded-full border-[14px] border-white/50 bg-gradient-to-br from-[#DDE8FF]/70 to-white/70 shadow-[inset_12px_12px_32px_rgba(111,145,220,0.13),-15px_-15px_50px_rgba(255,255,255,0.8)]" />
+      <div className="pointer-events-none absolute right-[8%] top-[16%] h-24 w-24 rounded-full border border-white/80 bg-white/25 shadow-[inset_5px_5px_16px_rgba(126,151,201,0.15),8px_8px_25px_rgba(102,132,191,0.13)]" />
 
-      {/* Main Container */}
-      <div className="mx-auto flex h-full max-h-[680px] w-full max-w-5xl items-stretch gap-3 overflow-hidden rounded-[28px] border border-[#DED8CE] bg-[#FBF9F5] p-2.5 shadow-[0_25px_80px_rgba(41,42,39,0.10)]">
-
-        {/* Left Register Panel */}
-        <aside className="relative hidden min-w-0 flex-1 flex-col justify-between overflow-hidden rounded-[28px] bg-[#53665A] p-8 text-[#F4F1EA] sm:p-9 lg:p-11 md:flex">
-
-          {/* Logo */}
+      <main className="relative z-10 mx-auto grid h-full min-h-0 w-full max-w-5xl items-center gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:gap-8">
+        <aside className="relative hidden h-full min-h-0 flex-col justify-between overflow-hidden rounded-[36px] border border-white/75 bg-gradient-to-br from-white/55 via-[#E5EDFC]/60 to-[#DCE7FA]/80 p-8 shadow-[16px_20px_48px_rgba(91,117,171,0.15),-10px_-10px_32px_rgba(255,255,255,0.8)] backdrop-blur-xl lg:flex">
           <div className="relative z-10">
-
-            <Link
-              to="/"
-              className="inline-flex items-center gap-3 font-heading text-xl font-bold"
-            >
-              <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#F4F1EA] text-[#53665A]">
-                C
+            <Link to="/" className="inline-flex items-center gap-3">
+              <span className="grid h-11 w-11 place-items-center rounded-2xl border border-white/90 bg-gradient-to-br from-white to-[#E3EBFB] text-blue-600 shadow-[7px_7px_18px_rgba(105,130,181,0.17),-6px_-6px_16px_rgba(255,255,255,0.9)]">
+                <MessageCircle size={22} strokeWidth={2.4} />
               </span>
-              Connectly
+              <span className="text-xl font-extrabold tracking-tight text-[#243451]">Connectly</span>
             </Link>
 
-            {/* Register Content */}
-            <div className="mt-14 lg:mt-16">
-
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5">
-                <span className="h-2 w-2 rounded-full bg-[#D6C2A8]" />
-                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#E0E5DD]">
-                  Your journey starts here
-                </span>
-              </div>
-
-              <h1 className="mt-5 max-w-sm font-heading text-4xl font-semibold leading-tight">
+            <div className="mt-12 max-w-sm">
+              <span className="inline-flex items-center gap-2 rounded-full border border-blue-200/80 bg-white/50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-700">
+                <span className="h-1.5 w-1.5 rounded-full bg-blue-500" /> A space to connect
+              </span>
+              <h1 className="mt-6 text-4xl font-extrabold leading-tight tracking-tight text-[#1D2E4D]">
                 Your next conversation starts here.
               </h1>
-
-              <p className="mt-4 max-w-sm text-sm leading-7 text-[#E0E5DD]">
-                Create your personal space to connect, share moments
-                and stay close to the people who matter.
+              <p className="mt-5 text-sm leading-7 text-[#657694]">
+                Create your account and bring your conversations, calls and shared moments together.
               </p>
-
-              {/* Small Decorative Detail */}
-              <div className="mt-7 flex items-center gap-3">
-                <div className="flex -space-x-2">
-                  <span className="grid h-9 w-9 place-items-center rounded-full border-2 border-[#53665A] bg-[#D6C2A8] text-xs font-bold text-[#53665A]">
-                    C
-                  </span>
-                  <span className="grid h-9 w-9 place-items-center rounded-full border-2 border-[#53665A] bg-[#E9E5DC] text-xs font-bold text-[#53665A]">
-                    +
-                  </span>
-                  <span className="grid h-9 w-9 place-items-center rounded-full border-2 border-[#53665A] bg-[#9C6B4E] text-xs font-bold text-white">
-                    +
-                  </span>
-                </div>
-
-                <p className="text-xs text-[#E0E5DD]">
-                  Connect. Communicate. Belong.
-                </p>
-              </div>
-
             </div>
           </div>
 
-          {/* Quote Card */}
-          <div className="relative z-10 max-w-sm rounded-2xl border border-white/15 bg-white/5 p-4 backdrop-blur-sm">
-
-            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-[#D8DFD5]">
-              A thought to begin with
+          <div className="relative z-10 flex items-center gap-3 rounded-2xl border border-white/80 bg-white/45 p-4 shadow-[inset_3px_3px_9px_rgba(142,158,190,0.12),inset_-3px_-3px_9px_rgba(255,255,255,0.75)]">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-blue-100/80 text-blue-700">
+              <ShieldCheck size={21} />
+            </span>
+            <p className="text-xs leading-5 text-[#5F6F8A]">
+              A simple, welcoming place to stay close to the people who matter.
             </p>
-
-            <p className="text-sm leading-6">
-              "Every meaningful connection starts with a hello."
-            </p>
-
-            <p className="mt-3 text-xs text-[#D8DFD5]">
-              — Connectly
-            </p>
-
           </div>
 
-          {/* Background Decorations */}
-          <div className="pointer-events-none absolute -bottom-28 -right-28 h-80 w-80 rounded-full border border-white/10" />
-
-          <div className="pointer-events-none absolute -bottom-16 -right-16 h-60 w-60 rounded-full border border-white/10" />
-
-          <div className="pointer-events-none absolute right-12 top-28 h-24 w-24 rounded-full bg-white/5 blur-2xl" />
-
+          <div className="pointer-events-none absolute -bottom-24 -right-20 h-64 w-64 rounded-full border border-white/70" />
+          <div className="pointer-events-none absolute -bottom-12 -right-8 h-40 w-40 rounded-full border border-white/70" />
         </aside>
 
-        {/* Right Register Panel */}
-        <div className="flex min-w-0 flex-1 items-center justify-center overflow-hidden rounded-[28px] bg-[#0B1015] px-4 py-3 sm:px-5 lg:px-7">
+        <section className="mx-auto flex h-full min-h-0 w-full max-w-xl flex-col justify-center py-0">
+          <Link to="/" className="mx-auto mb-2 flex w-fit items-center gap-2.5 lg:hidden">
+            <span className="grid h-9 w-9 place-items-center rounded-xl border border-white/90 bg-gradient-to-br from-white to-[#E3EBFB] text-blue-600 shadow-[7px_7px_18px_rgba(105,130,181,0.17),-6px_-6px_16px_rgba(255,255,255,0.9)]">
+              <MessageCircle size={22} strokeWidth={2.4} />
+            </span>
+            <span className="text-lg font-extrabold tracking-tight text-[#243451]">Connectly</span>
+          </Link>
 
-          <div className="w-full max-w-sm">
-
-            {/* Mobile Logo */}
-            <div className="mb-3 flex items-center justify-center gap-3 md:hidden">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#53665A] font-bold text-[#F4F1EA]">
-                C
-              </span>
-
-              <span className="font-heading text-xl font-bold text-white">
-                Connectly
-              </span>
+          <div className="rounded-[28px] border border-white/80 bg-white/40 p-3 shadow-[14px_18px_40px_rgba(91,117,171,0.16),-10px_-10px_32px_rgba(255,255,255,0.8)] backdrop-blur-xl sm:rounded-[34px] sm:p-6 md:p-7">
+            <div className="mb-3">
+              <p className="mb-1 text-[9px] font-bold uppercase tracking-[0.22em] text-blue-700">Join Connectly</p>
+              <h2 className="text-xl font-extrabold tracking-tight text-[#1D2E4D] sm:text-2xl">Create your account</h2>
+              <p className="mt-2 text-sm leading-6 text-[#667796]">A few details and you’ll be ready to connect.</p>
             </div>
 
-            {/* Register Heading */}
-            <div className="mb-3 text-center">
+            <form onSubmit={handleSubmit} noValidate className="space-y-2">
+              <Input
+                label="Name"
+                name="name"
+                icon={User}
+                placeholder="Your full name"
+                autoComplete="name"
+                value={form.name}
+                onChange={handleChange}
+                error={errors.name}
+              />
 
-              <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-[#53665A]/40 bg-[#53665A]/15 px-3 py-1">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#49D9BD]" />
-                <span className="text-[10px] font-semibold tracking-[0.16em] text-[#49D9BD]">
-                  JOIN CONNECTLY
+              <Input
+                label="Email"
+                name="email"
+                type="email"
+                icon={Mail}
+                placeholder="you@example.com"
+                autoComplete="email"
+                value={form.email}
+                onChange={handleChange}
+                error={errors.email}
+              />
+
+              <Input
+                label="Password"
+                name="password"
+                type="password"
+                icon={Lock}
+                placeholder="At least 6 characters"
+                autoComplete="new-password"
+                value={form.password}
+                onChange={handleChange}
+                error={errors.password}
+              />
+
+              <Input
+                label="Confirm password"
+                name="confirmPassword"
+                type="password"
+                icon={Lock}
+                placeholder="Repeat your password"
+                autoComplete="new-password"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                error={errors.confirmPassword}
+              />
+
+              {error && (
+                <div role="alert" className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50/90 px-3 py-3 text-sm text-red-700">
+                  <AlertCircle size={18} className="mt-0.5 shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
+
+              <Button type="submit" size="lg" loading={loading} className="w-full rounded-2xl py-2.5 text-sm">
+                <span className="inline-flex items-center gap-2">
+                  Create account <ArrowRight size={18} />
                 </span>
-              </div>
+              </Button>
+            </form>
 
-              <h2 className="font-heading text-2xl font-semibold tracking-tight text-[#F4F1EA] sm:text-3xl">
-                Create your account
-              </h2>
-
-              <p className="mt-1 text-xs text-[#A5AAA8]">
-                Just a few details to get you started.
-              </p>
-
-            </div>
-
-            {/* Register Card */}
-            <AuthCard
-              title=""
-              subtitle=""
-              footer={
-                <span className="text-[#A5AAA8]">
-                  Already have an account?{' '}
-                  <Link
-                    to="/login"
-                    className="font-semibold text-[#9C6B4E] transition hover:text-[#C28A68]"
-                  >
-                    Log in
-                  </Link>
-                </span>
-              }
-            >
-
-              <form
-                onSubmit={handleSubmit}
-                noValidate
-                className="space-y-2.5"
-              >
-
-                {/* Name */}
-                <Input
-                  label="Name"
-                  name="name"
-                  icon={User}
-                  placeholder="Your full name"
-                  autoComplete="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  error={errors.name}
-                />
-
-                {/* Email */}
-                <Input
-                  label="Email"
-                  name="email"
-                  type="email"
-                  icon={Mail}
-                  placeholder="you@example.com"
-                  autoComplete="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  error={errors.email}
-                />
-
-                {/* Password */}
-                <Input
-                  label="Password"
-                  name="password"
-                  type="password"
-                  icon={Lock}
-                  placeholder="At least 6 characters"
-                  autoComplete="new-password"
-                  value={form.password}
-                  onChange={handleChange}
-                  error={errors.password}
-                />
-
-                {/* Confirm Password */}
-                <Input
-                  label="Confirm password"
-                  name="confirmPassword"
-                  type="password"
-                  icon={Lock}
-                  placeholder="Repeat your password"
-                  autoComplete="new-password"
-                  value={form.confirmPassword}
-                  onChange={handleChange}
-                  error={errors.confirmPassword}
-                />
-
-                {/* Error Message */}
-                {error && (
-                  <div
-                    role="alert"
-                    className="flex items-start gap-2 rounded-xl border border-[#B94F42]/20 bg-[#B94F42]/10 px-3 py-2 text-xs text-[#E58B80]"
-                  >
-                    <AlertCircle size={16} className="mt-0.5 shrink-0" />
-                    <span>{error}</span>
-                  </div>
-                )}
-
-                {/* Create Account Button */}
-                <Button
-                  type="submit"
-                  size="lg"
-                  loading={loading}
-                  className="w-full"
-                >
-                  <span className="inline-flex items-center gap-2">
-                    Create account
-                    <ArrowRight size={16} />
-                  </span>
-                </Button>
-
-              </form>
-
-            </AuthCard>
-
-            {/* Bottom Text */}
-            <p className="mt-3 text-center text-[10px] text-[#777E7B]">
-              By joining Connectly, you're one step closer to meaningful connections.
+            <p className="mt-2 border-t border-white/70 pt-2 text-center text-xs text-[#667796] sm:mt-3 sm:pt-3 sm:text-sm">
+              Already have an account?{' '}
+              <Link to="/login" className="font-bold text-blue-700 transition hover:text-indigo-700">
+                Log in
+              </Link>
             </p>
-
           </div>
-        </div>
 
-      </div>
+          <p className="mt-2 text-center text-[9px] leading-4 text-[#7887A2] sm:mt-3 sm:text-[10px]">
+            Your Connectly account helps you keep meaningful conversations close.
+          </p>
+        </section>
+      </main>
     </div>
   );
 }

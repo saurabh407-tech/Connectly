@@ -1,10 +1,10 @@
 import { Loader2 } from 'lucide-react';
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60';
+  'inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition duration-200 disabled:cursor-not-allowed disabled:opacity-60';
 
 const variants = {
-  primary: 'bg-lagoon-400 text-ink-900 hover:bg-lagoon-300',
+  primary: 'bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 text-white shadow-[0_12px_26px_rgba(37,99,235,0.28)] hover:-translate-y-0.5 hover:brightness-105 hover:shadow-[0_16px_32px_rgba(37,99,235,0.35)]',
   secondary: 'border border-ink-600 bg-ink-800 text-slate-100 hover:bg-ink-700',
   ghost: 'text-slate-300 hover:bg-ink-700 hover:text-white',
 };
