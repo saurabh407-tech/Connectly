@@ -98,7 +98,7 @@ export default function Register() {
               <span className="grid h-11 w-11 place-items-center rounded-2xl border border-white/90 bg-gradient-to-br from-white to-[#E3EBFB] text-blue-600 shadow-[7px_7px_18px_rgba(105,130,181,0.17),-6px_-6px_16px_rgba(255,255,255,0.9)]">
                 <MessageCircle size={22} strokeWidth={2.4} />
               </span>
-              <span className="text-xl font-extrabold tracking-tight text-[#243451]">Connectly</span>
+              <span className="text-xl font-extrabold tracking-tight text-[#243451]">Nexora</span>
             </Link>
 
             <div className="mt-12 max-w-sm">
@@ -132,12 +132,12 @@ export default function Register() {
             <span className="grid h-9 w-9 place-items-center rounded-xl border border-white/90 bg-gradient-to-br from-white to-[#E3EBFB] text-blue-600 shadow-[7px_7px_18px_rgba(105,130,181,0.17),-6px_-6px_16px_rgba(255,255,255,0.9)]">
               <MessageCircle size={22} strokeWidth={2.4} />
             </span>
-            <span className="text-lg font-extrabold tracking-tight text-[#243451]">Connectly</span>
+            <span className="text-lg font-extrabold tracking-tight text-[#243451]">Nexora</span>
           </Link>
 
           <div className="rounded-[28px] border border-white/80 bg-white/40 p-3 shadow-[14px_18px_40px_rgba(91,117,171,0.16),-10px_-10px_32px_rgba(255,255,255,0.8)] backdrop-blur-xl sm:rounded-[34px] sm:p-6 md:p-7">
             <div className="mb-3">
-              <p className="mb-1 text-[9px] font-bold uppercase tracking-[0.22em] text-blue-700">Join Connectly</p>
+              <p className="mb-1 text-[9px] font-bold uppercase tracking-[0.22em] text-blue-700">Join Nexora</p>
               <h2 className="text-xl font-extrabold tracking-tight text-[#1D2E4D] sm:text-2xl">Create your account</h2>
               <p className="mt-2 text-sm leading-6 text-[#667796]">A few details and you’ll be ready to connect.</p>
             </div>
@@ -213,7 +213,7 @@ export default function Register() {
           </div>
 
           <p className="mt-2 text-center text-[9px] leading-4 text-[#7887A2] sm:mt-3 sm:text-[10px]">
-            Your Connectly account helps you keep meaningful conversations close.
+            Your Nexora account helps you keep meaningful conversations close.
           </p>
         </section>
       </main>

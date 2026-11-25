@@ -44,11 +44,11 @@ export const connectSocket = (token) => {
   });
 
   socket.on('connect', () => {
-    console.log('Connectly socket connected:', socket.id);
+    console.log('Nexora socket connected:', socket.id);
   });
 
   socket.on('disconnect', (reason) => {
-    console.log('Connectly socket disconnected:', reason);
+    console.log('Nexora socket disconnected:', reason);
   });
 
   socket.on('connect_error', (error) => {
@@ -72,5 +72,5 @@ export const disconnectSocket = () => {
   socket = null;
   currentToken = null;
 
-  console.log('Connectly socket disconnected successfully');
+  console.log('Nexora socket disconnected successfully');
 };

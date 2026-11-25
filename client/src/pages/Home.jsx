@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { MessageCircle, Video, ShieldCheck, Lock, Check, CheckCheck, ArrowUpRight } from 'lucide-react';
+import { MessageCircle, Video, ShieldCheck, Lock, ArrowUpRight } from 'lucide-react';
 import Navbar from '../components/layout/Navbar.jsx';
 import Footer from '../components/layout/Footer.jsx';
 import { buttonClasses } from '../components/common/Button.jsx';
@@ -11,35 +11,22 @@ const features = [
   { icon: ShieldCheck, title: 'Secure communication', text: 'Protected sign-in, access controls and secure connections help keep conversations private.' },
 ];
 
-function Bubble({ mine, children, meta }) {
+function AtomVisual() {
   return (
-    <div className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
-      <div className={`max-w-[85%] rounded-[18px] px-4 py-3 text-sm leading-6 ${mine ? 'rounded-br-md bg-[#B87959] text-[#FFF9F3]' : 'rounded-bl-md bg-[#E8E3DA] text-[#292A27]'}`}>
-        <p>{children}</p>
-        {meta && <p className="mt-1 flex items-center justify-end gap-1 text-[11px] opacity-70">{meta}</p>}
+    <div className="atom-visual" role="img" aria-label="Glowing nucleus surrounded by rotating atom particles">
+      <div className="atom-visual__aura" />
+      <div className="atom-ring atom-ring--outer"><span className="atom-particle atom-particle--large" /></div>
+      <div className="atom-ring atom-ring--middle">
+        <span className="atom-particle atom-particle--green" />
+        <span className="atom-particle atom-particle--small atom-particle--blue" />
+        <span className="atom-particle atom-particle--gold" />
       </div>
-    </div>
-  );
-}
-
-function ChatPreview() {
-  return (
-    <div className="w-full max-w-md rounded-[28px] border border-[#D8D1C6] bg-[#FBF9F5] p-5 shadow-[0_28px_70px_rgba(41,42,39,0.12)]">
-      <div className="flex items-center gap-3 border-b border-[#DED8CE] pb-4">
-        <span className="grid h-11 w-11 place-items-center rounded-full bg-[#53665A] text-sm font-semibold text-[#F4F1EA]">AM</span>
-        <div>
-          <p className="text-sm font-semibold text-[#292A27]">Aarav Mehta</p>
-          <p className="text-xs text-[#53665A]">Available</p>
-        </div>
-        <Video size={18} className="ml-auto text-[#77786F]" />
+      <div className="atom-ring atom-ring--inner">
+        <span className="atom-particle atom-particle--warm" />
+        <span className="atom-particle atom-particle--violet" />
+        <span className="atom-particle atom-particle--ice" />
       </div>
-      <div className="space-y-3 py-5">
-        <Bubble>Are we still on for the launch review at 4?</Bubble>
-        <Bubble mine meta={<>10:24 <CheckCheck size={13} /></>}>Yes. I'll share the build link in a minute.</Bubble>
-        <Bubble>Perfect. Jump on a call when it's ready.</Bubble>
-        <Bubble mine meta={<>10:25 <Check size={13} /></>}>Calling you now.</Bubble>
-      </div>
-      <div className="rounded-xl border border-[#DED8CE] bg-[#F4F1EA] px-4 py-3 text-sm text-[#929188]">Write a message</div>
+      <div className="atom-nucleus"><span /></div>
     </div>
   );
 }
@@ -53,12 +40,12 @@ export default function Home() {
       <main>
         <section className="relative mx-auto grid max-w-6xl items-center gap-12 overflow-hidden px-4 py-16 sm:px-6 md:py-24 lg:grid-cols-2">
           <div className="relative z-10">
-            <p className="mb-5 text-xs font-semibold uppercase tracking-[0.22em] text-[#9C6B4E]">A little closer, every day</p>
-            <h1 className="max-w-xl font-heading text-4xl font-semibold leading-[1.12] tracking-tight text-[#292A27] sm:text-5xl lg:text-6xl">
+            <p className="home-hero__eyebrow mb-5 text-xs font-semibold uppercase tracking-[0.22em] text-[#9C6B4E]">A little closer, every day</p>
+            <h1 className="home-hero__title max-w-xl text-4xl font-semibold leading-[1.12] tracking-tight text-[#292A27] sm:text-5xl lg:text-6xl">
               Conversation is what connects us.
             </h1>
-            <p className="mt-6 max-w-lg text-lg leading-8 text-[#77786F]">
-              Connectly brings messaging, voice and video together in a calm, considered space for the people you talk to every day.
+            <p className="home-hero__copy mt-6 max-w-lg text-lg leading-8 text-[#77786F]">
+              Nexora brings messaging, voice and video together in a calm, considered space for the people you talk to every day.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/register" className={buttonClasses({ size: 'lg' })}>Get started <ArrowUpRight className="ml-2 inline" size={16} /></Link>
@@ -71,7 +58,7 @@ export default function Home() {
           </div>
           <div className="relative flex justify-center lg:justify-end">
             <div className="absolute -left-8 top-10 h-40 w-40 rounded-full bg-[#D8C4B5]/40 blur-2xl" />
-            <ChatPreview />
+            <AtomVisual />
           </div>
         </section>
 

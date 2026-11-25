@@ -1,4 +1,4 @@
-# Connectly
+# Nexora
 
 A modern real-time chat application built with the MERN stack (JavaScript).
 

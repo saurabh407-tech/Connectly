@@ -1,4 +1,4 @@
-# Connectly Roadmap
+# Nexora Roadmap
 
 - [x] **Phase 0 – Scaffolding:** folder structure, config, landing/login/register/dashboard UI, Express + MongoDB + Socket.IO bootstrap
 - [ ] **Phase 1 – Authentication:** register, login, JWT, `GET /auth/me`, protected routes, password hashing

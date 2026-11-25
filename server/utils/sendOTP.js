@@ -3,8 +3,8 @@ const sendOTP = async (email, otp, purpose = 'registration') => {
   const isRegistration = purpose === 'registration';
 
   const subject = isRegistration
-    ? 'Connectly - Email Verification OTP'
-    : 'Connectly - Password Reset OTP';
+    ? 'Nexora - Email Verification OTP'
+    : 'Nexora - Password Reset OTP';
 
   const heading = isRegistration
     ? 'Verify Your Email'
@@ -19,12 +19,12 @@ const sendOTP = async (email, otp, purpose = 'registration') => {
 
   const emailPayload = {
     sender: {
-      name: 'Connectly',
+      name: 'Nexora',
       email: senderEmail,
     },
     to: [{ email }],
     subject,
-    textContent: `Your Connectly OTP is ${otp}. It expires in 5 minutes.`,
+    textContent: `Your Nexora OTP is ${otp}. It expires in 5 minutes.`,
     htmlContent: `
       <div style="font-family: Arial, sans-serif; padding: 24px;">
         <h2>${heading}</h2>

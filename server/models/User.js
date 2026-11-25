@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema(
 
     about: {
       type: String,
-      default: 'Hey there! I am using Connectly.',
+      default: 'Hey there! I am using Nexora.',
     },
 
     // Registration Email Verification

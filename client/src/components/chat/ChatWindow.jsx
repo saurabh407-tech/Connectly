@@ -410,7 +410,7 @@ export default function ChatWindow({
         </span>
 
         <h2 className="mt-5 text-xl font-bold text-[#292A27]">
-          Welcome to Connectly
+          Welcome to Nexora
         </h2>
 
         <p className="mt-2 max-w-sm text-sm text-[#77786F]">

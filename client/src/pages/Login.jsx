@@ -69,7 +69,7 @@ export default function Login() {
             <span className="grid h-10 w-10 place-items-center rounded-xl border border-white/90 bg-gradient-to-br from-white to-[#E3EBFB] text-blue-600 shadow-[8px_8px_20px_rgba(105,130,181,0.18),-7px_-7px_18px_rgba(255,255,255,0.9)]">
               <MessageCircle size={20} strokeWidth={2.4} />
             </span>
-            <span className="text-lg font-extrabold tracking-tight text-[#243451]">Connectly</span>
+            <span className="text-lg font-extrabold tracking-tight text-[#243451]">Nexora</span>
           </Link>
 
         <div className="mb-3 text-center sm:mb-4">
@@ -78,7 +78,7 @@ export default function Login() {
           </div>
           <p className="mb-1 text-[9px] font-bold uppercase tracking-[0.24em] text-blue-600">Your conversations await</p>
           <h1 className="font-serif text-2xl font-bold tracking-tight text-[#172747] sm:text-3xl">Welcome back</h1>
-          <p className="mt-1 text-xs tracking-wide text-[#667796] sm:text-sm">Sign in to continue to Connectly</p>
+          <p className="mt-1 text-xs tracking-wide text-[#667796] sm:text-sm">Sign in to continue to Nexora</p>
         </div>
 
           <form onSubmit={handleSubmit} noValidate className="space-y-3">
@@ -121,7 +121,7 @@ export default function Login() {
           </form>
 
           <div className="mt-3 border-t border-white/70 pt-3 text-center text-xs text-[#667796] sm:text-sm">
-            New to Connectly?{' '}
+            New to Nexora?{' '}
             <Link to="/register" className="font-bold text-blue-700 transition hover:text-indigo-700">
               Create an account
             </Link>

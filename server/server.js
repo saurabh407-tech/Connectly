@@ -65,7 +65,7 @@ app.use(
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'Connectly API is running',
+    message: 'Nexora API is running',
     data: {
       uptime: process.uptime(),
       timestamp: new Date().toISOString(),

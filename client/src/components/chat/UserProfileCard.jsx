@@ -270,8 +270,8 @@ export default function UserProfileCard({ user, onLogout }) {
                   {passwordEditorOpen
                     ? 'Choose a new password for your account'
                     : editOpen
-                      ? 'Update your Connectly account details'
-                      : 'Your Connectly account and call settings'}
+                      ? 'Update your Nexora account details'
+                      : 'Your Nexora account and call settings'}
                 </p>
               </div>
               <button
@@ -522,7 +522,7 @@ export default function UserProfileCard({ user, onLogout }) {
                     Privacy
                   </h3>
                   <p className="rounded-xl bg-ink-900 p-3 text-xs leading-relaxed text-slate-300">
-                    Your email and profile details are shown to people in Connectly. Your password is never shown.
+                    Your email and profile details are shown to people in Nexora. Your password is never shown.
                   </p>
                 </section>
 

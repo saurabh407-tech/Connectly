@@ -23,7 +23,7 @@ export default function App() {
   if (!hasHydrated) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#292A27] font-sans text-[#F4F1EA]">
-        Loading Connectly...
+        Loading Nexora...
       </div>
     );
   }
