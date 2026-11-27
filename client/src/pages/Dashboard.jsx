@@ -320,9 +320,12 @@ export default function Dashboard() {
     const conversations = useConversationStore.getState().conversations;
     const conversation = conversations.find((item) => String(item._id) === requestedId);
     const peerId = conversation?.participants?.find((person) => String(person._id) !== String(user?._id))?._id;
+    // The old URL remains in place until a newly selected profile resolves.
+    // Don't let it cancel that in-flight selection and reopen the old chat.
+    if (chatLoading && selectedUser) return;
     const peer = users.find((person) => String(person._id) === String(peerId));
     if (peer) handleSelectUser(peer, { syncHistory: true });
-  }, [location.search, selectedConversation?._id, users, user?._id]);
+  }, [location.search, selectedConversation?._id, selectedUser?._id, chatLoading, users, user?._id]);
 
   // Logout.
   const handleLogout = async () => {

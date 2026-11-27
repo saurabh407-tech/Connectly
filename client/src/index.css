@@ -726,3 +726,35 @@ body {
   background: rgba(230, 168, 120, 0.18) !important;
   color: #fff4e9 !important;
 }
+
+[class~="h-screen"][class~="overflow-hidden"][class~="bg-ink-900"] > section[class~="bg-[#F4F1EA]"] [data-pinned-entry] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  border: 1px solid rgba(230, 168, 120, 0.2);
+  border-radius: 9999px;
+  background: rgba(230, 168, 120, 0.09);
+  padding: 0 0.25rem 0 0;
+}
+
+[class~="h-screen"][class~="overflow-hidden"][class~="bg-ink-900"] > section[class~="bg-[#F4F1EA]"] [data-pinned-entry] [data-pinned-item] {
+  border: 0;
+  background: transparent !important;
+}
+
+[class~="h-screen"][class~="overflow-hidden"][class~="bg-ink-900"] > section[class~="bg-[#F4F1EA]"] [data-pinned-unpin] {
+  display: grid;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+  place-items: center;
+  border-radius: 9999px;
+  color: #e6a878 !important;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+[class~="h-screen"][class~="overflow-hidden"][class~="bg-ink-900"] > section[class~="bg-[#F4F1EA]"] [data-pinned-unpin]:hover {
+  background: rgba(230, 168, 120, 0.2) !important;
+  color: #fff4e9 !important;
+}

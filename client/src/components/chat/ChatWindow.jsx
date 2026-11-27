@@ -289,7 +289,7 @@ export default function ChatWindow({
 
   const runAction = async (message, action, payload = {}) => {
     try {
-      const response = await messageApi.action(message._id, action, payload);
+      const response = await messageApi.action(getId(message), action, payload);
       applyMessageAction(response.data.data);
       if (action === 'deleteEveryone' || action === 'deleteMe') {
         useConversationStore.getState().setLastMessage(conversationId, response.data.data.lastMessage);
@@ -529,7 +529,7 @@ export default function ChatWindow({
       {selectedConversation?.pinnedMessages?.length > 0 && (
         <div data-pinned-banner className="flex flex-wrap items-center gap-2 border-b px-5 py-2 text-xs">
           <Pin size={14} /> <span data-pinned-label>Pinned messages</span>
-          {selectedConversation.pinnedMessages.map((pin) => <button data-pinned-item key={getId(pin)} onClick={() => jumpToMessage(getId(pin))} className="underline">{pin.text || pin.attachment?.fileName || 'Message'}</button>)}
+          {selectedConversation.pinnedMessages.map((pin) => <span data-pinned-entry key={getId(pin)}><button data-pinned-item type="button" onClick={() => jumpToMessage(getId(pin))}>{pin.text || pin.attachment?.fileName || 'Pinned message'}</button><button data-pinned-unpin type="button" onClick={() => runAction(pin, 'unpin')} aria-label="Unpin message" title="Unpin message">×</button></span>)}
         </div>
       )}
       <div className="flex flex-1 flex-col gap-2 overflow-y-auto bg-[#F4F1EA] px-5 py-6">
