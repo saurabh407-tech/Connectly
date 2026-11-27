@@ -35,6 +35,8 @@ export default function Login() {
     if (Object.keys(found).length) return;
 
     try {
+      // Download the authenticated app while the sign-in request is in flight.
+      void import('./Dashboard.jsx').catch(() => {});
       await login({
         email: form.email.trim(),
         password: form.password,

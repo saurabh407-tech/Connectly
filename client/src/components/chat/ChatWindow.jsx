@@ -45,6 +45,7 @@ const formatDuration = (seconds = 0) => {
 export default function ChatWindow({
   selectedUser,
   selectedConversation,
+  conversationLoading = false,
   socket,
   onStartAudioCall,
   onStartVideoCall,
@@ -533,13 +534,17 @@ export default function ChatWindow({
       )}
       <div className="flex flex-1 flex-col gap-2 overflow-y-auto bg-[#F4F1EA] px-5 py-6">
         <div className="mt-auto flex flex-col gap-2">
-        {loading && (
+        {conversationLoading && (
+          <p className="m-auto text-sm text-[#77786F]">Connecting to conversation...</p>
+        )}
+
+        {!conversationLoading && loading && (
           <p className="m-auto text-sm text-[#77786F]">
             Loading messages...
           </p>
         )}
 
-        {!loading && messages.length === 0 && (
+        {!conversationLoading && !loading && messages.length === 0 && (
           <div className="m-auto text-center">
             <MessagesSquare
               size={38}
@@ -556,7 +561,7 @@ export default function ChatWindow({
           </div>
         )}
 
-        {!loading &&
+        {!conversationLoading && !loading &&
           messages.map((message) => {
             const senderId = getId(message.sender);
             const isOwnMessage = senderId === currentUserId;

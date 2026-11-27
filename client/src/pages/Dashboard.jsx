@@ -81,6 +81,7 @@ export default function Dashboard() {
   const [chatLoading, setChatLoading] = useState(false);
   const [chatError, setChatError] = useState('');
   const [socket, setSocket] = useState(null);
+  const selectionRequestRef = useRef(0);
 
   // Live call duration.
   const [callDuration, setCallDuration] = useState(0);
@@ -269,33 +270,38 @@ export default function Dashboard() {
 
   // Select user and open conversation.
   const handleSelectUser = async (selected, { syncHistory = false } = {}) => {
+    const requestId = ++selectionRequestRef.current;
     if (!selected) {
       setSelectedUser(null);
       setSelectedConversation(null);
+      setChatLoading(false);
       setChatError('');
       clearMessages();
       if (!syncHistory) navigate('/dashboard', { replace: true });
       return;
     }
 
-    try {
-      setChatLoading(true);
-      setChatError('');
+    setSelectedUser(selected);
+    setSelectedConversation(null);
+    setChatLoading(true);
+    setChatError('');
+    clearMessages();
 
+    try {
       const response =
         await conversationApi.createOrGet(selected._id);
 
+      if (requestId !== selectionRequestRef.current) return;
       const conversation = response.data.data.conversation;
 
-      setSelectedUser(selected);
       setSelectedConversation(conversation);
       if (!syncHistory) navigate(`/dashboard?chat=${conversation._id}`);
       upsertConversation(conversation);
       clearUnread(conversation._id);
     } catch (error) {
-      setChatError(error.message);
+      if (requestId === selectionRequestRef.current) setChatError(error.message);
     } finally {
-      setChatLoading(false);
+      if (requestId === selectionRequestRef.current) setChatLoading(false);
     }
   };
 
@@ -411,6 +417,7 @@ export default function Dashboard() {
       <ChatWindow
         selectedUser={selectedUser}
         selectedConversation={selectedConversation}
+        conversationLoading={chatLoading}
         socket={socket}
         onStartAudioCall={(receiver) =>
           startCall(receiver, 'audio', selectedConversation?._id)
@@ -595,15 +602,6 @@ export default function Dashboard() {
               </div>
             )}
           </div>
-        </div>
-      )}
-
-      {/* Chat loading */}
-      {chatLoading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <p className="rounded-xl bg-ink-800 px-5 py-3 text-sm text-white">
-            Opening conversation...
-          </p>
         </div>
       )}
 
