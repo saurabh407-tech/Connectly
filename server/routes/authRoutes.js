@@ -12,6 +12,8 @@ import {
   updateProfile,
   verifyProfileEmail,
   changePassword,
+  keepAuthSessionAlive,
+  revokeAuthSession,
 } from '../controllers/authController.js';
 
 import { protect } from '../middleware/authMiddleware.js';
@@ -23,6 +25,8 @@ router.post('/register', register);
 router.post('/verify-email-otp', verifyEmailOTP);
 router.post('/login', login);
 router.get('/me', protect, getMe);
+router.post('/session/heartbeat', protect, keepAuthSessionAlive);
+router.post('/logout', protect, revokeAuthSession);
 router.put('/profile', protect, profilePhotoUpload.single('avatar'), updateProfile);
 router.post('/profile/verify-email', protect, verifyProfileEmail);
 router.post('/change-password', protect, changePassword);

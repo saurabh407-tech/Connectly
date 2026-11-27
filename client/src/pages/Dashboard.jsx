@@ -1,6 +1,6 @@
 
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Phone,
   PhoneOff,
@@ -18,7 +18,7 @@ import useUserStore from '../store/userStore.js';
 import useMessageStore from '../store/messageStore.js';
 import useConversationStore from '../store/conversationStore.js';
 
-import { conversationApi, messageApi } from '../services/api.js';
+import { authApi, conversationApi, messageApi } from '../services/api.js';
 
 import {
   connectSocket,
@@ -33,12 +33,14 @@ export default function Dashboard() {
   useDocumentTitle('Chats');
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const user = useAuthStore((state) => state.user);
   const token = useAuthStore((state) => state.token);
   const logout = useAuthStore((state) => state.logout);
 
   const fetchUsers = useUserStore((state) => state.fetchUsers);
+  const users = useUserStore((state) => state.users);
   const clearUsers = useUserStore((state) => state.clearUsers);
 
   const updateUserStatus = useUserStore(
@@ -48,6 +50,7 @@ export default function Dashboard() {
   const fetchConversations = useConversationStore(
     (state) => state.fetchConversations
   );
+  const upsertConversation = useConversationStore((state) => state.upsertConversation);
 
   const incrementUnread = useConversationStore(
     (state) => state.incrementUnread
@@ -198,11 +201,22 @@ export default function Dashboard() {
       });
     };
 
+    const handleMessageAction = (data) => {
+      useMessageStore.getState().applyMessageAction(data);
+      if (data.action === 'deleteEveryone' || data.action === 'deleteMe') {
+        useConversationStore.getState().setLastMessage(data.conversationId, data.lastMessage);
+      }
+      if (data.action === 'pin' || data.action === 'unpin') {
+        setSelectedConversation((current) => current && String(current._id) === String(data.conversationId) ? { ...current, pinnedMessages: data.pinnedMessages || [] } : current);
+      }
+    };
+
     // Register socket listeners.
     connectedSocket.on('new_message', handleNewMessage);
     connectedSocket.on('user_status', handleUserStatus);
     connectedSocket.on('message_delivered', handleMessageDelivered);
     connectedSocket.on('messages_read', handleMessagesRead);
+    connectedSocket.on('message_action', handleMessageAction);
 
     // Remove listeners when the component unmounts or effect reruns.
     return () => {
@@ -210,6 +224,7 @@ export default function Dashboard() {
       connectedSocket.off('user_status', handleUserStatus);
       connectedSocket.off('message_delivered', handleMessageDelivered);
       connectedSocket.off('messages_read', handleMessagesRead);
+      connectedSocket.off('message_action', handleMessageAction);
 
       setSocket(null);
       disconnectSocket();
@@ -253,12 +268,13 @@ export default function Dashboard() {
   }, [selectedConversation?._id]);
 
   // Select user and open conversation.
-  const handleSelectUser = async (selected) => {
+  const handleSelectUser = async (selected, { syncHistory = false } = {}) => {
     if (!selected) {
       setSelectedUser(null);
       setSelectedConversation(null);
       setChatError('');
       clearMessages();
+      if (!syncHistory) navigate('/dashboard', { replace: true });
       return;
     }
 
@@ -273,12 +289,8 @@ export default function Dashboard() {
 
       setSelectedUser(selected);
       setSelectedConversation(conversation);
-
-      // Refresh the sidebar independently so a slow list request cannot keep
-      // the newly selected conversation behind the opening overlay.
-      fetchConversations().catch((error) =>
-        console.error('Failed to refresh conversations:', error.message)
-      );
+      if (!syncHistory) navigate(`/dashboard?chat=${conversation._id}`);
+      upsertConversation(conversation);
       clearUnread(conversation._id);
     } catch (error) {
       setChatError(error.message);
@@ -287,12 +299,32 @@ export default function Dashboard() {
     }
   };
 
+  // A browser or phone Back action returns to the previous chat or to the list.
+  useEffect(() => {
+    const requestedId = new URLSearchParams(location.search).get('chat');
+    if (!requestedId) {
+      if (selectedConversation) {
+        setSelectedUser(null);
+        setSelectedConversation(null);
+        clearMessages();
+      }
+      return;
+    }
+    if (String(selectedConversation?._id || '') === requestedId) return;
+    const conversations = useConversationStore.getState().conversations;
+    const conversation = conversations.find((item) => String(item._id) === requestedId);
+    const peerId = conversation?.participants?.find((person) => String(person._id) !== String(user?._id))?._id;
+    const peer = users.find((person) => String(person._id) === String(peerId));
+    if (peer) handleSelectUser(peer, { syncHistory: true });
+  }, [location.search, selectedConversation?._id, users, user?._id]);
+
   // Logout.
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (call) {
       endCall();
     }
 
+    await authApi.logout().catch(() => {});
     disconnectSocket();
     logout();
     clearUsers();
@@ -386,8 +418,22 @@ export default function Dashboard() {
         onStartVideoCall={(receiver) =>
           startCall(receiver, 'video', selectedConversation?._id)
         }
-        onBack={() => handleSelectUser(null)}
+        onBack={() => {
+          if ((window.history.state?.idx ?? 0) > 0) navigate(-1);
+          else handleSelectUser(null, { syncHistory: true });
+        }}
         callActive={Boolean(call)}
+        onOpenStarred={async (conversationId, messageId) => {
+          try {
+            const response = await conversationApi.getAll();
+            const conversation = (response.data.data.conversations || []).find((item) => String(item._id) === String(conversationId));
+            const peer = conversation?.participants?.find((participant) => String(participant._id) !== String(user?._id));
+            if (peer) {
+              await handleSelectUser(peer);
+              window.setTimeout(() => document.getElementById(`message-${messageId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 500);
+            }
+          } catch (error) { console.error('Could not open starred message:', error.message); }
+        }}
       />
 
       {/* Audio / Video call window */}

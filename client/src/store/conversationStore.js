@@ -22,6 +22,17 @@ const useConversationStore = create((set, get) => ({
     }
   },
 
+  upsertConversation: (conversation) => set((state) => {
+    const existing = state.conversations.find((item) => String(item._id) === String(conversation._id));
+    const merged = existing
+      ? { ...existing, ...conversation, lastMessage: conversation.lastMessage, unreadCount: existing.unreadCount || 0 }
+      : { ...conversation, unreadCount: 0 };
+    return {
+      conversations: [merged, ...state.conversations.filter((item) => String(item._id) !== String(conversation._id))]
+        .sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0)),
+    };
+  }),
+
   incrementUnread: (conversationId, message) => {
     set((state) => ({
       conversations: state.conversations.map((conversation) => {
@@ -62,6 +73,12 @@ const useConversationStore = create((set, get) => ({
       ),
     }));
   },
+
+  setLastMessage: (conversationId, lastMessage) => set((state) => ({
+    conversations: state.conversations.map((conversation) => String(conversation._id) === String(conversationId)
+      ? { ...conversation, lastMessage: lastMessage || null }
+      : conversation),
+  })),
 
   resetConversations: () => set({
     conversations: [],

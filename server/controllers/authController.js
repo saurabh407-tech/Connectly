@@ -1,9 +1,23 @@
 
 import User from '../models/User.js';
-import generateToken from '../utils/generateToken.js';
 import sendOTP from '../utils/sendOTP.js';
 import crypto from 'crypto';
 import { uploadImage } from '../services/cloudinaryServices.js';
+import jwt from 'jsonwebtoken';
+import AuthSession from '../models/AuthSession.js';
+
+const SESSION_LEASE_MS = 30_000;
+
+const createAuthToken = async (userId) => {
+  const session = await AuthSession.create({
+    user: userId,
+    expiresAt: new Date(Date.now() + SESSION_LEASE_MS),
+  });
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+    jwtid: session._id.toString(),
+    expiresIn: process.env.JWT_EXPIRES_IN || '30d',
+  });
+};
 
 const hashOTP = (otp) =>
   crypto.createHash('sha256').update(String(otp)).digest('hex');
@@ -177,7 +191,7 @@ export const verifyEmailOTP = async (req, res, next) => {
 
     await user.save();
 
-    const token = generateToken(user._id);
+    const token = await createAuthToken(user._id);
 
     return res.status(200).json({
       success: true,
@@ -229,7 +243,7 @@ export const login = async (req, res, next) => {
       });
     }
 
-    const token = generateToken(user._id);
+    const token = await createAuthToken(user._id);
 
     return res.status(200).json({
       success: true,
@@ -249,6 +263,26 @@ export const login = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+// Renew the short session lease while this browser tab remains active.
+export const keepAuthSessionAlive = async (req, res, next) => {
+  try {
+    if (req.authSessionId) {
+      await AuthSession.updateOne(
+        { _id: req.authSessionId, user: req.user._id },
+        { $set: { expiresAt: new Date(Date.now() + SESSION_LEASE_MS) } }
+      );
+    }
+    return res.status(204).end();
+  } catch (error) { next(error); }
+};
+
+export const revokeAuthSession = async (req, res, next) => {
+  try {
+    if (req.authSessionId) await AuthSession.deleteOne({ _id: req.authSessionId, user: req.user._id });
+    return res.status(204).end();
+  } catch (error) { next(error); }
 };
 
 // @desc Get current user

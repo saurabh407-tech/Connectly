@@ -46,11 +46,11 @@ const useMessageStore = create((set, get) => ({
   },
 
   // Send normal text message
-  sendMessage: async (conversationId, text) => {
+  sendMessage: async (conversationId, text, replyTo) => {
     set({ sending: true, error: null });
 
     try {
-      const response = await messageApi.sendMessage(conversationId, text);
+      const response = await messageApi.sendMessage(conversationId, text, replyTo);
       const message = response.data.data.message;
 
       if (
@@ -73,7 +73,7 @@ const useMessageStore = create((set, get) => ({
   },
 
   // Upload image, document, audio or voice message
-  uploadAttachment: async (conversationId, file, attachmentType = '') => {
+  uploadAttachment: async (conversationId, file, attachmentType = '', replyTo = null) => {
     set({ sending: true, error: null });
 
     try {
@@ -89,7 +89,8 @@ const useMessageStore = create((set, get) => ({
 
       const response = await messageApi.uploadAttachment(
         conversationId,
-        formData
+        formData,
+        replyTo
       );
 
       // Supports either a direct message response or { message: ... }
@@ -134,6 +135,13 @@ const useMessageStore = create((set, get) => ({
       messages: [...messages, message],
     });
   },
+
+  applyMessageAction: (payload) => set((state) => {
+    if (String(payload.conversationId) !== String(state.currentConversationId)) return state;
+    const id = String(payload.messageId || payload.message?._id);
+    if (payload.action === 'deleteMe') return { messages: state.messages.filter((item) => String(item._id) !== id) };
+    return { messages: state.messages.map((item) => String(item._id) === id ? { ...item, ...(payload.message || {}) } : item) };
+  }),
 
   // Update delivery receipt
   markMessageDelivered: ({ messageId, deliveredTo }) => {

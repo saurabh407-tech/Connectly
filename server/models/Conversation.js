@@ -32,9 +32,12 @@ const conversationSchema = new mongoose.Schema(
       ref: 'Message',
       default: null,
     },
+    pinnedMessages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
   },
   { timestamps: true }
 );
+
+conversationSchema.index({ participants: 1, isGroup: 1 });
 
 const Conversation = mongoose.model('Conversation', conversationSchema);
 

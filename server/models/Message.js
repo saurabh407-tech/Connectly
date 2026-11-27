@@ -20,6 +20,15 @@ const messageSchema = new mongoose.Schema(
       maxlength: 5000,
       default: '',
     },
+    replyTo: { type: mongoose.Schema.Types.ObjectId, ref: 'Message', default: null },
+    editedAt: { type: Date, default: null },
+    deletedForEveryone: { type: Boolean, default: false },
+    deletedFor: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    reactions: [{
+      user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+      emoji: { type: String, required: true, maxlength: 16 },
+    }],
+    starredBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 
     // text = chat message, call = call history entry
     type: {
@@ -103,6 +112,7 @@ const messageSchema = new mongoose.Schema(
 );
 
 messageSchema.index({ conversation: 1, createdAt: -1 });
+messageSchema.index({ conversation: 1, readBy: 1, sender: 1 });
 
 const Message = mongoose.model('Message', messageSchema);
 

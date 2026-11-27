@@ -95,6 +95,16 @@ export default function ConversationList({ onSelect }) {
           {filteredUsers.map((user) => {
             const conversation = getConversation(user._id);
             const unreadCount = conversation?.unreadCount || 0;
+            const lastMessage = conversation?.lastMessage;
+            const preview = conversation
+              ? lastMessage?.text || (lastMessage?.attachmentType === 'image'
+                ? 'Photo'
+                : lastMessage?.attachmentType === 'document'
+                  ? 'Document'
+                  : lastMessage?.attachmentType === 'audio' || lastMessage?.attachmentType === 'voice'
+                    ? 'Audio message'
+                    : lastMessage ? 'Message' : 'No messages yet')
+              : user.about || user.email;
 
             return (
               <li key={user._id}>
@@ -117,9 +127,7 @@ export default function ConversationList({ onSelect }) {
                     </p>
 
                     <p className="truncate text-xs text-slate-400">
-                      {conversation?.lastMessage?.text ||
-                        user.about ||
-                        user.email}
+                      {preview}
                     </p>
                   </div>
 

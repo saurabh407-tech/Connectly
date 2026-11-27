@@ -30,6 +30,8 @@ export const authApi = {
   login: (data) => api.post('/auth/login', data),
 
   me: () => api.get('/auth/me'),
+  keepSessionAlive: () => api.post('/auth/session/heartbeat'),
+  logout: () => api.post('/auth/logout'),
 
   updateProfile: (formData) => api.put('/auth/profile', formData),
 
@@ -58,15 +60,19 @@ export const messageApi = {
   getMessages: (conversationId) =>
     api.get(`/messages/${conversationId}`),
 
-  sendMessage: (conversationId, text) =>
-    api.post(`/messages/${conversationId}`, { text }),
+  sendMessage: (conversationId, text, replyTo) =>
+    api.post(`/messages/${conversationId}`, { text, replyTo }),
 
   // Upload image, document, audio or voice message
-  uploadAttachment: (conversationId, formData) =>
-    api.post(`/messages/upload/${conversationId}`, formData),
+  uploadAttachment: (conversationId, formData, replyTo) => {
+    if (replyTo) formData.append('replyTo', replyTo);
+    return api.post(`/messages/upload/${conversationId}`, formData);
+  },
 
   markRead: (conversationId) =>
     api.patch(`/messages/${conversationId}/read`),
+  action: (messageId, action, payload = {}) => api.patch(`/messages/item/${messageId}`, { action, ...payload }),
+  starred: () => api.get('/messages/starred'),
 };
 
 export default api;

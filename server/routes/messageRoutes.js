@@ -4,6 +4,8 @@ import {
   getMessages,
   sendMessage,
   markMessagesRead,
+  messageAction,
+  getStarredMessages,
 } from '../controllers/messageController.js';
 
 import { uploadAttachment } from '../controllers/attachmentController.js';
@@ -12,6 +14,9 @@ import { protect } from '../middleware/authMiddleware.js';
 import upload from '../middleware/uploadMiddleware.js';
 
 const router = Router();
+
+router.get('/starred', protect, getStarredMessages);
+router.patch('/item/:messageId', protect, messageAction);
 
 // Get all messages
 router.get('/:conversationId', protect, getMessages);

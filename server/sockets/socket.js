@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import User from '../models/User.js';
 import Conversation from '../models/Conversation.js';
 import Message from '../models/Message.js';
+import AuthSession from '../models/AuthSession.js';
 
 let io;
 
@@ -180,8 +181,15 @@ export const initSocket = (httpServer, allowedOrigins) => {
       }
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-      const user = await User.findById(decoded.id).select('_id name');
+      const [user, session] = await Promise.all([
+        User.findById(decoded.id).select('_id name'),
+        decoded.jti
+          ? AuthSession.findOne({ _id: decoded.jti, user: decoded.id, expiresAt: { $gt: new Date() } }).select('_id')
+          : Promise.resolve(null),
+      ]);
+      if (decoded.jti) {
+        if (!session) return next(new Error('Session expired. Please log in again.'));
+      }
 
       if (!user) {
         return next(new Error('User not found'));
